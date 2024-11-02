@@ -1,15 +1,10 @@
-import telebot,threading,time
-
-bot = telebot.TeleBot("7223928760:AAEnnfc58NBgdnO1YVFT0VTPc2akQtfRYfU")
-
-def alert(message,text):
-	while True:
-		time.sleep(86400)
-		bot.send_message(message.chat.id,text)	
+import threading,time,asyncio
+from telebot.async_telebot import AsyncTeleBot
+bot = AsyncTeleBot("7223928760:AAEnnfc58NBgdnO1YVFT0VTPc2akQtfRYfU")	
 
 @bot.message_handler(commands=["start"])
-def _start(message):
-	bot.reply_to(message,"""دز الاوامر هيج
+async def _start(message):
+	await bot.reply_to(message,"""دز الاوامر هيج
 
 /alert الرسالة
 
@@ -17,11 +12,12 @@ def _start(message):
 """)
 
 @bot.message_handler(commands=["alert"])
-def _alert(message):
+async def _alert(message):
 	text = message.text.split("/alert ")[1]
-	bot.reply_to(message,"تم يومية راح ادز هيج")
-	thread = threading.Thread(target=alert,args=(message,text))
-	thread.start()
+	await bot.reply_to(message,"تم يومية راح ادز هيج")
+	while True:
+		await asyncio.sleep(86400)
+		await bot.send_message(message.chat.id,text)
 
 print("The BOT is UP")
-bot.infinity_polling()
+asyncio.run(bot.infinity_polling())
